@@ -55,8 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and().csrf().disable()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeHttpRequests()
+                .and().authorizeHttpRequests()
 
                 // public routes
                     .antMatchers("/public/**").permitAll()
@@ -64,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.POST, "/authenticate").permitAll()
 
                 // private routes
-                    .antMatchers("/admin").hasAnyAuthority("ADMIN")
+                    .antMatchers("/admin").hasAuthority("ADMIN")
                     .antMatchers("/user").hasAnyAuthority("USER", "ADMIN")
                     .anyRequest().authenticated()
                 .and()
@@ -77,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowCredentials(true);
-        corsConfig.addAllowedOrigin("*");
+        corsConfig.addAllowedOrigin("http://localhost:4200");
         corsConfig.addAllowedHeader("*");
         corsConfig.addAllowedMethod("*");
         corsConfigurationSource.registerCorsConfiguration("/**", corsConfig);
