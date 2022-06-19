@@ -27,7 +27,8 @@ public class SpecialtyDao implements GenericDao<Specialty, Specialty, Integer> {
 
     @Override
     public int create(Specialty specialty) {
-        return 0;
+        String sql = "INSERT INTO especialidade(nome) VALUES (?)";
+        return jdbcTemplate.update(sql, specialty.getName());
     }
 
     @Override
@@ -48,13 +49,20 @@ public class SpecialtyDao implements GenericDao<Specialty, Specialty, Integer> {
         return jdbcTemplate.query(sql, rowMapper);
     }
 
-    @Override
-    public int update(Specialty specialty, Integer integer) {
-        return 0;
+    public List<Specialty> getByName(String name){
+        String sql = "SELECT id, nome FROM especialidade WHERE nome LIKE ?";
+        return jdbcTemplate.query(sql, rowMapper, String.format("%2$s%1$s%2$s", name, "%"));
     }
 
     @Override
-    public int delete(Integer integer) {
-        return 0;
+    public int update(Specialty specialty, Integer id) {
+        String sql = "UPDATE especialidade SET nome = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, specialty.getName(), id);
+    }
+
+    @Override
+    public int delete(Integer id) {
+        String sql = "DELETE FROM especialidade WHERE especialidade.id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 }

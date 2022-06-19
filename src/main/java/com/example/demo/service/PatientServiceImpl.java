@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.PatientDao;
+import com.example.demo.dto.PatientDto;
 import com.example.demo.model.Patient;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,9 @@ public class PatientServiceImpl implements PatientService{
     }
 
     @Override
-    public int add(Patient patient) {
-        return patientDao.create(patient);
+    public int add(PatientDto patientDto) {
+        Patient patientModel = patientDto.toModel();
+        return patientDao.create(patientModel);
     }
 
     @Override
@@ -34,8 +36,14 @@ public class PatientServiceImpl implements PatientService{
     }
 
     @Override
-    public int update(Patient patient, Integer id) {
-        return patientDao.update(patient, id);
+    public List<Patient> getByName(String name){
+        return patientDao.getByName(name);
+    }
+
+    @Override
+    public int update(PatientDto patientDto, Integer id) {
+        Patient patientModel = patientDto.toModel();
+        return patientDao.update(patientModel, id);
     }
 
     @Override

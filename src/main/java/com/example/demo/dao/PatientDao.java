@@ -2,6 +2,7 @@ package com.example.demo.dao;
 
 import com.example.demo.model.Patient;
 import com.example.demo.model.User;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,7 +45,6 @@ public class PatientDao implements GenericDao<Patient, Patient, Integer>{
         } catch (DataAccessException ex){
             System.out.printf("Could not find Patient with id of '%s'%n", id);
         }
-        User user = null;
         return Optional.ofNullable(patient);
     }
 
@@ -52,6 +52,11 @@ public class PatientDao implements GenericDao<Patient, Patient, Integer>{
     public List<Patient> read() {
         String sql = "SELECT id, primeiro_nome, ultimo_nome, data_nascimento FROM paciente;";
         return jdbcTemplate.query(sql, rowMapper);
+    }
+
+    public List<Patient> getByName(String name){
+        String sql = "SELECT id, primeiro_nome, ultimo_nome, data_nascimento FROM paciente WHERE primeiro_nome LIKE ?";
+        return jdbcTemplate.query(sql, rowMapper, String.format("%2$s%1$s%2$s", name, "%"));
     }
 
     @Override
