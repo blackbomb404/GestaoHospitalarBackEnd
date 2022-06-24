@@ -20,12 +20,12 @@ public class MedicDao implements GenericDao<Medic, Medic, Integer> {
     private final RowMapper<Medic> rowMapper = (rs, rowNum) -> {
         Medic medic = new Medic();
         medic.setId(rs.getInt("id"));
-        medic.setFirstname(rs.getString("primeiro_nome"));
-        medic.setLastname(rs.getString("ultimo_nome"));
+        medic.setFirstname(rs.getString("firstname"));
+        medic.setLastname(rs.getString("lastname"));
 
         Specialty specialty = new Specialty();
-        specialty.setId(rs.getInt("id_esp"));
-        specialty.setName(rs.getString("nome_esp"));
+        specialty.setId(rs.getInt("id_spec"));
+        specialty.setName(rs.getString("spec_name"));
 
         medic.setSpecialty(specialty);
         return medic;
@@ -33,14 +33,13 @@ public class MedicDao implements GenericDao<Medic, Medic, Integer> {
 
     @Override
     public int create(Medic medic) {
-        String sql = "INSERT INTO medico(primeiro_nome, ultimo_nome, id_especialidade) VALUES (?,?,?)";
+        String sql = "CALL usp_medic_insert(?,?,?)";
         return jdbcTemplate.update(sql, medic.getFirstname(), medic.getLastname(), medic.getSpecialty().getId());
     }
 
     @Override
     public Optional<Medic> read(Integer id){
-        String sql = "SELECT medico.id, primeiro_nome, ultimo_nome, esp.id AS id_esp, esp.nome AS nome_esp FROM medico\n" +
-                "INNER JOIN especialidade AS esp ON medico.id_especialidade = esp.id WHERE medico.id = ?";
+        String sql = "CALL usp_medic_selectById(?);";
         Medic medic = null;
         try{
             medic = jdbcTemplate.queryForObject(sql, rowMapper, id);
@@ -52,26 +51,24 @@ public class MedicDao implements GenericDao<Medic, Medic, Integer> {
 
     @Override
     public List<Medic> read() {
-        String sql = "SELECT medico.id, primeiro_nome, ultimo_nome, esp.id AS id_esp, esp.nome AS nome_esp FROM medico\n" +
-                "INNER JOIN especialidade AS esp ON medico.id_especialidade = esp.id";
+        String sql = "CALL usp_medic_selectAll()";
         return jdbcTemplate.query(sql, rowMapper);
     }
 
-    public List<Medic> getByName(String name){
-        String sql = "SELECT medico.id, primeiro_nome, ultimo_nome, esp.id AS id_esp, esp.nome AS nome_esp FROM medico\n" +
-                "INNER JOIN especialidade AS esp ON medico.id_especialidade = esp.id WHERE primeiro_nome LIKE ?";
-        return jdbcTemplate.query(sql, rowMapper, String.format("%2$s%1$s%2$s", name, "%"));
+    public List<Medic> getByFirstname(String name){
+        String sql = "CALL usp_medic_selectByFirstname(?);";
+        return jdbcTemplate.query(sql, rowMapper, name);
     }
 
     @Override
     public int update(Medic medic, Integer id) {
-        String sql = "UPDATE medico SET primeiro_nome = ?, ultimo_nome = ?, id_especialidade = ? WHERE id = ?";
+        String sql = "CALL usp_medic_update(?,?,?,?)";
         return jdbcTemplate.update(sql, medic.getFirstname(), medic.getLastname(), medic.getSpecialty().getId(), id);
     }
 
     @Override
     public int delete(Integer id) {
-        String sql = "DELETE FROM medico WHERE id = ?";
+        String sql = "CALL usp_medic_deleteById(?)";
         return jdbcTemplate.update(sql, id);
     }
 }

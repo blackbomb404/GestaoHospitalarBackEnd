@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface PatientService extends CrudService<PatientDto, Patient, Integer>{
-    List<Patient> getByName(String name);
+    List<Patient> getByFirstname(String name);
 }

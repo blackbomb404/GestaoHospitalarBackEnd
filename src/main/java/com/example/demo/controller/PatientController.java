@@ -25,10 +25,10 @@ public class PatientController {
     }
 
     @GetMapping
-    public List<Patient> getAll(@RequestParam(required = false) String name){
-        if(name == null)
+    public List<Patient> getAll(@RequestParam(required = false) String firstname){
+        if(firstname == null)
             return patientService.getAll();
-        return patientService.getByName(name);
+        return patientService.getByFirstname(firstname);
     }
 
     @GetMapping("{id}")

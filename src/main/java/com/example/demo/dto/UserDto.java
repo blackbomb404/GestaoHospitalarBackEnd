@@ -17,5 +17,5 @@ public class UserDto {
     Double salary;
     String username;
     String password;
-    List<Integer> authoritiesIds;
+    List<String> authorityIds;
 }

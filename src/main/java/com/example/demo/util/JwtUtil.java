@@ -1,9 +1,7 @@
 package com.example.demo.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.example.demo.config.UserDetailsImpl;
+import io.jsonwebtoken.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +13,11 @@ public class JwtUtil {
     private final static String SECRET_KEY = "secret";
 
     public static String generateToken(UserDetails userDetails){
-        String username = userDetails.getUsername();
         Map<String, Object> claims = new HashMap<>();
+        claims.put("firstname", ((UserDetailsImpl)userDetails).getFirstname());
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(username)
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
@@ -30,8 +28,12 @@ public class JwtUtil {
     }
 
     public static boolean validateToken(String token){
-        Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-        return true;
+        try{
+            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e){
+            return false;
+        }
     }
 
     public static String extractUsername(String token){

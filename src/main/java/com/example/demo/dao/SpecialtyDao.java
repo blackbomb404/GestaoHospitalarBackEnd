@@ -16,7 +16,7 @@ public class SpecialtyDao implements GenericDao<Specialty, Specialty, Integer> {
         Specialty specialty = new Specialty();
 
         specialty.setId(rs.getInt("id"));
-        specialty.setName(rs.getString("nome"));
+        specialty.setName(rs.getString("name"));
 
         return specialty;
     };
@@ -27,13 +27,13 @@ public class SpecialtyDao implements GenericDao<Specialty, Specialty, Integer> {
 
     @Override
     public int create(Specialty specialty) {
-        String sql = "INSERT INTO especialidade(nome) VALUES (?)";
+        String sql = "CALL usp_specialty_insert(?)";
         return jdbcTemplate.update(sql, specialty.getName());
     }
 
     @Override
     public Optional<Specialty> read(Integer id) {
-        String sql = "SELECT id, nome FROM especialidade WHERE id = ?";
+        String sql = "CALL usp_specialty_selectById(?)";
         Specialty specialty = null;
         try{
             specialty = jdbcTemplate.queryForObject(sql, rowMapper, id);
@@ -45,24 +45,24 @@ public class SpecialtyDao implements GenericDao<Specialty, Specialty, Integer> {
 
     @Override
     public List<Specialty> read() {
-        String sql = "SELECT id, nome FROM especialidade";
+        String sql = "CALL usp_specialty_selectAll()";
         return jdbcTemplate.query(sql, rowMapper);
     }
 
     public List<Specialty> getByName(String name){
-        String sql = "SELECT id, nome FROM especialidade WHERE nome LIKE ?";
-        return jdbcTemplate.query(sql, rowMapper, String.format("%2$s%1$s%2$s", name, "%"));
+        String sql = "CALL usp_specialty_selectByFirstname(?)";
+        return jdbcTemplate.query(sql, rowMapper, name);
     }
 
     @Override
     public int update(Specialty specialty, Integer id) {
-        String sql = "UPDATE especialidade SET nome = ? WHERE id = ?";
+        String sql = "CALL usp_specialty_update(?,?)";
         return jdbcTemplate.update(sql, specialty.getName(), id);
     }
 
     @Override
     public int delete(Integer id) {
-        String sql = "DELETE FROM especialidade WHERE especialidade.id = ?";
+        String sql = "CALL usp_specialty_deleteById(?)";
         return jdbcTemplate.update(sql, id);
     }
 }

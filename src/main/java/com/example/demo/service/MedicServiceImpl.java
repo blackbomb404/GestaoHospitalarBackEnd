@@ -31,8 +31,8 @@ public class MedicServiceImpl implements MedicService{
     }
 
     @Override
-    public List<Medic> getByName(String name) {
-        return medicDao.getByName(name);
+    public List<Medic> getByFirstname(String firstname) {
+        return medicDao.getByFirstname(firstname);
     }
 
     @Override

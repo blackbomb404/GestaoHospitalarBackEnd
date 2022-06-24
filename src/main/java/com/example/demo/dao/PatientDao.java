@@ -23,22 +23,22 @@ public class PatientDao implements GenericDao<Patient, Patient, Integer>{
         Patient patient = new Patient();
 
         patient.setId(rs.getInt("id"));
-        patient.setFirstname(rs.getString("primeiro_nome"));
-        patient.setLastname(rs.getString("ultimo_nome"));
-        patient.setBirthdate(rs.getObject("data_nascimento", LocalDate.class));
+        patient.setFirstname(rs.getString("firstname"));
+        patient.setLastname(rs.getString("lastname"));
+        patient.setBirthdate(rs.getObject("birthdate", LocalDate.class));
 
         return patient;
     };
 
     @Override
     public int create(Patient patient) {
-        String sql = "INSERT INTO paciente(primeiro_nome, ultimo_nome, data_nascimento) VALUES (?,?,?)";
+        String sql = "CALL usp_patient_insert(?,?,?)";
         return jdbcTemplate.update(sql, patient.getFirstname(), patient.getLastname(), patient.getBirthdate());
     }
 
     @Override
     public Optional<Patient> read(Integer id) {
-        String sql = "SELECT id, primeiro_nome, ultimo_nome, data_nascimento FROM paciente WHERE id = ?";
+        String sql = "CALL usp_patient_selectById(?)";
         Patient patient = null;
         try {
             patient = jdbcTemplate.queryForObject(sql, rowMapper, id);
@@ -50,24 +50,24 @@ public class PatientDao implements GenericDao<Patient, Patient, Integer>{
 
     @Override
     public List<Patient> read() {
-        String sql = "SELECT id, primeiro_nome, ultimo_nome, data_nascimento FROM paciente;";
+        String sql = "CALL usp_patient_selectAll()";
         return jdbcTemplate.query(sql, rowMapper);
     }
 
-    public List<Patient> getByName(String name){
-        String sql = "SELECT id, primeiro_nome, ultimo_nome, data_nascimento FROM paciente WHERE primeiro_nome LIKE ?";
-        return jdbcTemplate.query(sql, rowMapper, String.format("%2$s%1$s%2$s", name, "%"));
+    public List<Patient> getByFirstname(String firstname){
+        String sql = "CALL usp_patient_selectByFirstname(?)";
+        return jdbcTemplate.query(sql, rowMapper, firstname);
     }
 
     @Override
     public int update(Patient patient, Integer id) {
-        String sql = "UPDATE paciente SET primeiro_nome=?, ultimo_nome=?, data_nascimento=? WHERE id = ?";
+        String sql = "CALL usp_patient_update(?,?,?,?)";
         return jdbcTemplate.update(sql, patient.getFirstname(), patient.getLastname(), patient.getBirthdate(), id);
     }
 
     @Override
     public int delete(Integer id) {
-        String sql = "DELETE FROM paciente WHERE id = ?";
+        String sql = "CALL usp_patient_deleteById(?)";
         return jdbcTemplate.update(sql, id);
     }
 }

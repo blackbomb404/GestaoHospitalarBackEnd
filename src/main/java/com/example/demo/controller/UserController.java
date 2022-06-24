@@ -16,15 +16,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public String home(Authentication authentication){
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return format("<h2>Successfull Login!<br>Be welcome, %s .</h2>", userDetails.getUsername());
-    }
-
     @PostMapping
-    public String add(@RequestBody UserDto userDto){
-        return userService.add(userDto) == 1 ? "User successfuly created!" : "Something went wrong...";
+    public int add(@RequestBody UserDto userDto){
+        return userService.add(userDto);
     }
 
 }

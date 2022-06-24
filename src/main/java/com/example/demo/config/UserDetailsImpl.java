@@ -13,6 +13,10 @@ public class UserDetailsImpl implements UserDetails {
         this.user = user;
     }
 
+    public String getFirstname(){
+        return user.getFirstname();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getGrantedAuthorities();

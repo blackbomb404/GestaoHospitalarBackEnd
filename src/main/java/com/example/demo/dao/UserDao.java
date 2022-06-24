@@ -55,13 +55,13 @@ public class UserDao implements GenericDao<UserDto, User, String>{
 
     @Override
     public int create(UserDto user) {
-        int userAffectedRows = jdbcTemplate.update("INSERT INTO user VALUES(?,?,?,?,?,?)",
+        int userAffectedRows = jdbcTemplate.update("INSERT INTO user VALUES(?, ?, ?, ?, ?, ?)",
                 user.getUsername(), user.getPassword(), user.getFirstname(),
                 user.getLastname(), user.getEmail(), user.getSalary());
 
         List<String> sqlSyntax = new ArrayList<>();
         List<Object> data = new ArrayList<>();
-        user.getAuthoritiesIds().forEach(id -> {
+        user.getAuthorityIds().forEach(id -> {
             sqlSyntax.add("(?,?)");
             data.add(user.getUsername());
             data.add(id);

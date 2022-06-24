@@ -6,5 +6,5 @@ import com.example.demo.model.Medic;
 import java.util.List;
 
 public interface MedicService extends CrudService<MedicDto, Medic, Integer>{
-    List<Medic> getByName(String name);
+    List<Medic> getByFirstname(String name);
 }
